@@ -102,3 +102,46 @@ in the `a` list multiple times. But that only exists in the sample data and not 
 unnecessary.
 
 Anyway, nice and easy first day.
+
+---
+
+## Refactoring with "sum" helper function
+
+I always love reading [Todd Ginsberg's](https://github.com/tginsberg/advent-2024-kotlin) solutions to Advent puzzles,
+because I enjoy seeing a Kotlin master at work. He often showcases the power of the Kotlin standard library, which
+simplifies code by putting common helper functions into a shared library. I think I'd like to do some of that this year,
+but since the Clojure language is loathe to add "filler" functions, and I don't want to use someone's random work to
+build my code, I'm going to do it myself.
+
+So I bring you... the `sum` function!
+
+```clojure
+; This is in the abyala.advent-utils-clojure.core package
+(defn sum
+  "Sums the values in a collection. If a function `f` is provided, then map `f` to each value in the collection
+  before adding them together."
+  ([coll] (apply + coll))
+  ([f coll] (transduce (map f) + coll)))
+```
+
+I'm adding this function to the [Advent Utils](https://github.com/abyala/advent-utils-clojure) repo for reuse, but essentially this is a cleaner way to look at
+adding up a collection, including using an optional transformational function. With this function at our disposal, the
+code looks even simpler.
+
+```clojure
+(defn part1 [input]
+  (->> (map sort (parse-pairs input))
+       (apply map vector)
+       (c/sum #(abs (apply - %)))))
+
+(defn part2 [input]
+  (let [[a b] (parse-pairs input)
+        freqs (frequencies b)]
+    (c/sum #(* (or (freqs %) 0) %) a)))
+```
+
+Both instances use the 2-arity version of the function, which under the hood does the same as before - call `transduce`
+with the mapping function provided, and then add up the results. I realize from looking at this that it doesn't provide
+the full flexibility of `transduce`, especially if we want to do more than call a mapping function. For instance, a
+transduction can support mapping and filtering without creating any intermediate sequences, but I'll bet that 9 out of
+10 times, I expect that one would only want to use `sum` with a mapping function, so I think it's good.
