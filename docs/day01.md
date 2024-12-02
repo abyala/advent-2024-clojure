@@ -145,3 +145,20 @@ with the mapping function provided, and then add up the results. I realize from 
 the full flexibility of `transduce`, especially if we want to do more than call a mapping function. For instance, a
 transduction can support mapping and filtering without creating any intermediate sequences, but I'll bet that 9 out of
 10 times, I expect that one would only want to use `sum` with a mapping function, so I think it's good.
+
+## Minor extra refactoring
+
+Thanks to seeing [Tom Schady's solution](https://github.com/tschady/advent-of-code/blob/main/src/aoc/2024/d01.clj) on
+the Clojurian Slack, I'm making a small refact oring to the `part2` function.
+
+```clojure
+(defn part2 [input]
+  (let [[a b] (parse-pairs input)
+        freqs (frequencies b)]
+    (c/sum #(* % (get freqs % 0)) a)))
+```
+
+In my first solution, I used `(or (freqs %) 0)` to return the value of looking up a value in the `freqs` map, and
+returning `nil` if it wasn't found. Instead, `(get freqs % 0)` accomplishes the same thing in a single expression and
+is more descriptive of the intention. I also put the multiplication of `%` at the front of the expression, so
+`(* % (get freqs % 0))` instead of `(* (get freqs % 0) %)` to let the eye have an easier time with the parentheses.

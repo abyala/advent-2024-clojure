@@ -15,4 +15,4 @@
 (defn part2 [input]
   (let [[a b] (parse-pairs input)
         freqs (frequencies b)]
-    (c/sum #(* (or (freqs %) 0) %) a)))
+    (c/sum #(* % (get freqs % 0)) a)))
