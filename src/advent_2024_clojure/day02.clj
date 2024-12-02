@@ -8,7 +8,7 @@
         (every? #(<= 1 % 3) diffs))))
 
 (defn safe-with-dampener? [report]
-  (some safe? (cons report (c/unique-combinations (dec (count report)) report))))
+  (some safe? (c/remove-each-subrange report)))
 
 (defn solve [with-dampener? input]
   (c/count-when (if with-dampener? safe-with-dampener? safe?)
@@ -16,3 +16,4 @@
 
 (defn part1 [input] (solve false input))
 (defn part2 [input] (solve true input))
+

@@ -83,3 +83,46 @@ Uh oh - that looks just like part 1! Let's refactor them to use a common `solve`
 `solve` takes in a boolean value `with-dampener?` to decide whether to call `safe?` or `safe-with-dampener?`. Whichever
 predicate it uses, it does the same parsing/splitting logic, and the same call to `count-when`. There - it's nice and
 clean to look at. So pretty.
+
+### Refactorings
+
+### Avoid using unique-combinations
+
+My friend [Matt Kunn](https://github.com/mtkuhn) correctly pointed out that my use of `unique-combinations` may not be
+wise, since there's nothing in the API which guarantees the solution retains the original collection's order. So in
+this case, it may make sense to be more explicit. Fair enough, let's do it.
+
+```clojure
+; New library function in the abyala.advent-utils-clojure.core namespace 
+(defn remove-each-subrange
+  "Returns the result of every way to remove a subrange from a collection, defaulting to a removal length of 1.
+  The length must be a positive integer or it will fail with an assertion error. The function will return an empty
+  list if the value of `n` is at least the size of the input collection."
+  ([coll] (remove-each-subrange 1 coll))
+  ([n coll]
+   {:pre [(pos-int? n)]}
+   (if (< n (count coll))
+     (map #(concat (take % coll) (drop (+ n %) coll))
+          (range (- (count coll) n -1)))
+     ())))
+```
+
+The `remove-each-subrange` function takes a collection and an optional number of values to extract out, defaulting to
+one. Using a combination of `take` and `drop`, it returns all possible ways to remove a subrange of length `n` from the
+input collection. I made this function generalizable, in case I ever wanted to remove more than a single value from the
+middle.
+
+Armed with this function, we can now re-implement the `safe-with-dampener?` function.
+
+```clojure
+(defn safe-with-dampener? [report]
+  (some safe? (c/remove-each-subrange report)))
+```
+
+Now we just call `remove-each-subrange` instead of `unique-combinations`. We no longer need to count the target length
+of each resulting collection, since this function requires passing in the length of the subranges to _remove_ instead
+of the length of the _output_ values.
+
+But wait, you say - why do we no longer need to call `(cons report ...)` in the front? Well, as I read on the
+Clojurian Slack, if a record is safe in its entirety, then it must be safe if you remove the first value as well. So
+this makes the code even that much more succinct and readable.
