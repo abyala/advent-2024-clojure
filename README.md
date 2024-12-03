@@ -4,7 +4,7 @@
 |-------|--------------------|-----------------------|---------------------------------------------|
 | 1     | Historian Hysteria | [blog](docs/day01.md) | [source](src/advent_2024_clojure/day01.clj) |
 | 2     | Red-Nosed Reports  | [blog](docs/day02.md) | [source](src/advent_2024_clojure/day02.clj) |
-| 3     |                    | blog                  | source                                      |
+| 3     | Mull It Over       | [blog](docs/day03.md) | [source](src/advent_2024_clojure/day03.clj) |
 | 4     |                    | blog                  | source                                      |
 | 5     |                    | blog                  | source                                      |
 | 6     |                    | blog                  | source                                      |
