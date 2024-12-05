@@ -21,18 +21,14 @@
                  #{}
                  page-list)))
 
-(defn middle-index [page-list]
-  {:pre [(odd? (count page-list))]}
-  (page-list (/ (dec (count page-list)) 2)))
-
 (defn part1 [input]
   (let [{:keys [rules page-lists]} (parse-input input)]
     (transduce (comp (filter (partial correct-order? rules))
-                     (map middle-index))
+                     (map c/middle))
                + page-lists)))
 
 (defn part2 [input]
   (let [{:keys [rules page-lists]} (parse-input input)]
     (transduce (comp (remove (partial correct-order? rules))
-                     (map (comp middle-index (partial reorder rules))))
+                     (map (comp c/middle (partial reorder rules))))
                + page-lists)))

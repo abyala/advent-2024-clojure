@@ -6,17 +6,17 @@
     {:rules      (reduce (fn [m [left right]] (c/map-conj hash-set m left right))
                          {}
                          (map c/split-longs rule-str))
-     :page-lists (map (comp vec c/split-longs) page-list-str)}))
+     :page-lists (map c/split-longs page-list-str)}))
 
 (defn reorder [rules page-list]
-  (vec (sort (fn [v1 v2] (cond ((rules v1 #{}) v2) -1
-                               ((rules v2 #{}) v1) 1
-                               :else 0))
-             page-list)))
+  (sort (fn [v1 v2] (cond ((rules v1 #{}) v2) -1
+                          ((rules v2 #{}) v1) 1
+                          :else 0))
+        page-list))
 
 (defn process [rules page-list]
   (let [reordered (reorder rules page-list)]
-    {:correct? (= page-list reordered), :middle (reordered (quot (count reordered) 2))}))
+    {:correct? (= page-list reordered), :middle (c/middle reordered)}))
 
 (defn solve [already-correct? input]
   (let [{:keys [rules page-lists]} (parse-input input)]

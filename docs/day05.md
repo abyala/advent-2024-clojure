@@ -144,7 +144,9 @@ any changes, but that's kind of silly.
   (= page-list (reorder rules page-list)))
 ```
 
-## Refactor to always use comparators
+## Refactorings
+
+### Always use comparators
 
 Ok fine - I did a reimplementation to use the `reorder` and its comparator for both parts 1 and 2, and I placed it in
 the [day05-compact](https://github.com/abyala/advent-2024-clojure/blob/master/src/advent_2024_clojure/day05_compact.clj)
@@ -179,3 +181,55 @@ The `solve` function parses the input into the rules and page-lists, and then tr
 them together. In the transformation function, we first process each rule, and then we filter the results based on
 whether we wanted the ones that were originally correct or not. Finally, we pull out the middle value. Part 1 works
 with the ones that were already correct, and part 2 the ones that weren't.
+
+### Use lists instead of vectors
+
+I realized that since we're not really doing anything with indexes within each page-list, there's no need to use
+vectors, and that simple lists should suffice. So sticking to the `day05-compact` namespace, we can make a few small
+changes to simplify things.
+
+```clojure
+; Old and new lines of parse-input
+:page-lists (map (comp vec c/split-longs) page-list-str)
+:page-lists (map c/split-longs page-list-str)
+
+; Old and new implementations of reorder
+(vec (sort (fn ...) page-list))
+(sort (fn ...) page-list)
+
+; Old and new lines of process
+{:correct? (= page-list reordered), :middle (reordered (quot (count reordered) 2))}
+{:correct? (= page-list reordered), :middle (middle reordered)}
+```
+
+The first two changes just involve not turning the lists into vectors. The last one uses a `middle` function? What's
+that all about? Well, since I'm wasting time anyway, why not add support for a new `middle` function in my
+[advent-utils-clojure](https://github.com/abyala/advent-utils-clojure/) library.
+
+```clojure
+(defn middle
+  "Returns the value in the middle of a collection. If given an empty collection, it returns nil. If given a collection
+  with an odd number of values, it picks the middle one. If given a collection with an even number of values, it
+  decides based on the value of the `middle-strategy` argument, which accepts values of `:low`, `:high` or `:fail`,
+  where `:fail` (the default) throws an IllegalArgumentException."
+  ([coll] (middle :fail coll))
+  ([middle-strategy coll]
+   {:pre [(#{:low :high :fail} middle-strategy)]}
+   (when (seq coll)
+     (let [c (count coll)
+           idx (quot c 2)]
+       (cond (or (odd? c) (= middle-strategy :high)) (nth coll idx)
+             (= middle-strategy :low) (nth coll (dec idx))
+             :else (throw (IllegalArgumentException.
+                            "Function \"middle\" cannot be called with an even-length collection without a middle-strategy.")))))))
+```
+
+I rather like this function, since this is hardly the first time we needed to grab the middle value out of a collection.
+First off, this uses `(nth coll idx)` instead `(v-coll idx)` because you cannot use the latter approach on lists, only
+on vectors. But second, I still think it's important to be explicit when asking for the middle value of a collection in
+case it has an even number of entries, so this function supports that. You can have it either pick the low or high
+value if it's even-length, or, as would be appropriate in a problem like this, fail with an `IllegalArgumentException`.
+So now we've added to the library of useful Advent stuff!
+
+For the record, I updated both `day05` and `day05-compact` to use the `c/middle` function, eliminating the
+`middle-index` function from the former namespace.
