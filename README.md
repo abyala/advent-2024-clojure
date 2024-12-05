@@ -6,7 +6,7 @@
 | 2     | Red-Nosed Reports  | [blog](docs/day02.md) | [source](src/advent_2024_clojure/day02.clj)                                                                                |
 | 3     | Mull It Over       | [blog](docs/day03.md) | [source](src/advent_2024_clojure/day03.clj)<br/>[reusable transducer source](src/advent_2024_clojure/day03_transducer.clj) |
 | 4     | Ceres Search       | [blog](docs/day04.md) | [source](src/advent_2024_clojure/day04.clj)                                                                                |
-| 5     | Print Queue        | [blog](docs/day05.md) | [source](src/advent_2024_clojure/day05.clj)                                                                                |
+| 5     | Print Queue        | [blog](docs/day05.md) | [source](src/advent_2024_clojure/day05.clj)<br/>[compact source](src/advent_2024_clojure/day05_compact.clj)                |
 | 6     |                    | blog                  | source                                                                                                                     |
 | 7     |                    | blog                  | source                                                                                                                     |
 | 8     |                    | blog                  | source                                                                                                                     |

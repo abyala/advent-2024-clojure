@@ -2,6 +2,7 @@
 
 * [Problem statement](https://adventofcode.com/2024/day/5)
 * [Solution code](https://github.com/abyala/advent-2024-clojure/blob/master/src/advent_2024_clojure/day05.clj)
+* [Compact solution code](https://github.com/abyala/advent-2024-clojure/blob/master/src/advent_2024_clojure/day05_compact.clj)
 
 ## Intro
 
@@ -142,3 +143,39 @@ any changes, but that's kind of silly.
 (defn correct-order? [rules page-list]
   (= page-list (reorder rules page-list)))
 ```
+
+## Refactor to always use comparators
+
+Ok fine - I did a reimplementation to use the `reorder` and its comparator for both parts 1 and 2, and I placed it in
+the [day05-compact](https://github.com/abyala/advent-2024-clojure/blob/master/src/advent_2024_clojure/day05_compact.clj)
+namespace. Let's quickly have a look.
+
+To start, I keep the same implementations of `parse-input` and `reorder`, and I scrapped the `correct-order?` and
+`middle-index` functions. The idea now is that for each page-list, we will _always_ reorder it and return both whether
+it originally was correct and what the new middle value is. For readability, I threw the results into a map with keys
+`:correct?` and `:middle`.
+
+```clojure
+(defn process [rules page-list]
+  (let [reordered (reorder rules page-list)]
+    {:correct? (= page-list reordered), :middle (reordered (quot (count reordered) 2))}))
+```
+
+Then we just have to do our solution, and now I can justify a unified `solve` function with a common transducer:
+
+```clojure
+(defn solve [already-correct? input]
+  (let [{:keys [rules page-lists]} (parse-input input)]
+    (transduce (comp (map (partial process rules))
+                     (filter #(= already-correct? (:correct? %)))
+                     (map :middle))
+               + page-lists)))
+
+(defn part1 [input] (solve true input))
+(defn part2 [input] (solve false input))
+```
+
+The `solve` function parses the input into the rules and page-lists, and then transduces over the page-lists by summing
+them together. In the transformation function, we first process each rule, and then we filter the results based on
+whether we wanted the ones that were originally correct or not. Finally, we pull out the middle value. Part 1 works
+with the ones that were already correct, and part 2 the ones that weren't.
