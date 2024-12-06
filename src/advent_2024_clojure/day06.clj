@@ -39,5 +39,3 @@
     (->> candidates
          (map #(assoc points % :block))
          (c/count-when #(guard-stuck? % guard)))))
-
-; 53 seconds to start
