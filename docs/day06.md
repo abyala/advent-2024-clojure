@@ -140,3 +140,85 @@ value at that location to `:block`, and then call `(c/count-when #(guard-stuck? 
 trick that pesky guard.
 
 It's still 13 seconds for part 2, but it's also 1 in the morning, so I declare that to be fast enough.
+
+## Refactorings
+
+### Build up the initial state
+
+One optimization we can make is to recognize that we don't have to evaluate the start of each run through the maze from
+the start until the first obstacle is reached, since we can reuse state. For instance, imagine that the guard's initial
+path is 1 million steps, and we have 1000 possible spaces where we can place the obstacle. Two possible obstacles are
+at step 900,000 and 900,001. Well the path we took to get to step 900,000 will necessarily be the same as the one we
+took to 900,001, so long as we didn't otherwise run into the latter's obstacle beforehand. Using this logic, we can
+reuse a bunch of processing state as we go through our options. Let's see how this plays out
+
+```clojure
+(defn guard-path [points guard-loc guard-dir]
+  (letfn [(next-step [guard-loc, dir]
+            (let [loc' (p/move guard-loc dir)]
+              (case (points loc')
+                :space (lazy-seq (cons [guard-loc dir] (next-step loc' dir)))
+                :block (lazy-seq (cons [guard-loc dir] (next-step guard-loc (turn-right dir))))
+                (list [guard-loc dir]))))]
+    (next-step guard-loc guard-dir)))
+```
+
+The only change we're making to `guard-path` is to require passing in the guard's starting location, instead of assuming
+it will always be north. In the above scenario, if the guard at step 900,000 is facing east, then we'll want to assume
+the path to that point is already known, and then we'll "start" the guard at his new position but facing east.
+
+```clojure
+(defn guard-stuck? [points guard-loc guard-dir prev-path]
+  (true? (reduce (fn [seen' loc-dir] (if (seen' loc-dir) (reduced true) (conj seen' loc-dir)))
+                 (set prev-path)
+                 (guard-path points guard-loc guard-dir))))
+```
+
+Similarly, `guard-stuck?` now takes in two additional arguments - the guard's direction (we already know why) and the
+previous path the guard had already walked. When this function calls `guard-path`, it of course passes in the 
+`guard-dir` argument now, but it also initializes the `reduce` accumulator to the set of all `[loc dir]` pairs in the
+previous path, rather than making an empty set. It does this because it knows that those steps have already been seen.
+
+```clojure
+(defn possible-obstacles [points guard]
+  (->> (guard-path points guard north)
+       (partition 2 1)
+       (reduce (fn [[options prev-path seen :as acc] [[loc0 dir0] [loc1 _]]]
+                 (let [path' (conj prev-path [loc0 dir0])]
+                   (if (seen loc1) (assoc acc 1 path')
+                                   [(conj options {:guard-loc loc0, :guard-dir dir0, :obstacle loc1, :prev-path prev-path})
+                                    path'
+                                    (conj seen loc1)])))
+               [() [] #{}])
+       first))
+```
+
+This is a new helper function that decides where the guard was before hitting each possible obstacle for the first time.
+It starts off by calling `guard-path` from the starting location and facing north; remember that this returns a
+sequence of `[loc dir]` pairs. Then calling `(partition 2 1)` on the pairs gives us a sequence of all adjacent pairs,
+such that we can see the before and after of every step taken. Then we get to the meat of the function, reducing over
+those pair of pairs. The state of the reduction is a collection of three collections - a sequence of options to be
+returned, the path of steps taken to the current pair, and the set of all locations previously seen. Each time a new
+step is found, it first checks to see if the target location has already been seen. If so, we essentially skip it, only
+updating the previous path by appending the current location and direction. If we hadn't seen the target location, then
+this is our first opportunity to mark it with an obstacle, so we'll add an option. The option contains the _current_
+location and direction of the guard (we need to know where the guard was before encountering the future obstacle), the
+target location (where the obstacle will be), and the path previously taken to get to the current spot. When the
+reduction is done, we return the sequence of options by calling `(first)`, discarding the other intermediate
+collections.
+
+Finally, we're ready to re-solve part 2.
+
+```clojure
+(defn part2 [input]
+  (let [{:keys [points guard]} (parse-input input)]
+    (c/count-when (fn [{:keys [guard-loc guard-dir obstacle prev-path]}]
+                    (guard-stuck? (assoc points obstacle :block) guard-loc guard-dir prev-path))
+                  (possible-obstacles points guard))))
+```
+
+Now, we parse the input again, and we do `c/count-when` again, but this time we work through each of the results from
+`possible-obstacles`. For each one, we'll `assoc` the defined obstacle to be a `:block`, and then check to see if the
+guard gets stuck if they start from the position before encountering the obstacle.
+
+The impact? Total runtime dropped from 13 seconds to 4 seconds. Woot!
