@@ -8,7 +8,7 @@
 | 4     | Ceres Search       | [blog](docs/day04.md) | [source](src/advent_2024_clojure/day04.clj)                                                                                |
 | 5     | Print Queue        | [blog](docs/day05.md) | [source](src/advent_2024_clojure/day05.clj)<br/>[compact source](src/advent_2024_clojure/day05_compact.clj)                |
 | 6     | Guard Gallivant    | [blog](docs/day06.md) | [source](src/advent_2024_clojure/day06.clj)                                                                                |
-| 7     |                    | blog                  | source                                                                                                                     |
+| 7     | Bridge Repair      | [blog](docs/day07.md) | [source](src/advent_2024_clojure/day07.clj)                                                                                |
 | 8     |                    | blog                  | source                                                                                                                     |
 | 9     |                    | blog                  | source                                                                                                                     |
 | 10    |                    | blog                  | source                                                                                                                     |
