@@ -1,5 +1,5 @@
 {:deps
  {
-  io.github.abyala/advent-utils-clojure {:git/sha "db59cfc7c31ce7852b1bbb092c0c006320ec7130"}
+  io.github.abyala/advent-utils-clojure {:git/sha "bfdc83840ee3edfc61e6e6b35dddc9d308de0948"}
   }
  }
