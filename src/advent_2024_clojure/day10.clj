@@ -2,24 +2,22 @@
   (:require [abyala.advent-utils-clojure.core :as c]
             [abyala.advent-utils-clojure.point :as p]))
 
-(defn parse-input [input]
-  (let [points (p/parse-to-char-coords-map c/parse-int-char input)]
-    (reduce-kv (fn [acc p c] (cond-> (assoc-in acc [:outgoing p] (filter #(= (points %) (inc c))
-                                                                         (p/neighbors p)))
-                                     (= c 0) (update :trail-heads conj p)))
-               {:points points, :outgoing {}, :trail-heads ()}
-               points)))
+(defn trail-heads [points]
+  (keep #(when (zero? (second %)) (first %)) points))
 
-(defn all-paths-to-destination [data]
+(defn neighbors [points p]
+  (filter #(= (points %) (inc (points p))) (p/neighbors p)))
+
+(defn all-paths-to-destination [points]
   (reduce-kv (fn [acc p v] (assoc acc p (if (= v 9) (list p)
-                                                    (mapcat acc (get-in data [:outgoing p])))))
+                                                    (mapcat acc (neighbors points p)))))
              {}
-             (sort-by (comp - second) (:points data))))
+             (sort-by (comp - second) points)))
 
 (defn solve [f input]
-  (let [data (parse-input input)
-        reachable (all-paths-to-destination data)]
-    (transduce (map (comp count f reachable)) + (:trail-heads data))))
+  (let [points (p/parse-to-char-coords-map c/parse-int-char input)
+        reachable (all-paths-to-destination points)]
+    (transduce (map (comp count f reachable)) + (trail-heads points))))
 
 (defn part1 [input] (solve set input))
 (defn part2 [input] (solve identity input))
