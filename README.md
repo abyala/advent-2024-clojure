@@ -10,7 +10,7 @@
 | 6     | Guard Gallivant       | [blog](docs/day06.md) | [source](src/advent_2024_clojure/day06.clj)                                                                                |
 | 7     | Bridge Repair         | [blog](docs/day07.md) | [source](src/advent_2024_clojure/day07.clj)                                                                                |
 | 8     | Resonant Collinearity | [blog](docs/day08.md) | [source](src/advent_2024_clojure/day08.clj)                                                                                |
-| 9     |                       | blog                  | source                                                                                                                     |
+| 9     | Disk Fragmenter       | [blog](docs/day09.md) | [source](src/advent_2024_clojure/day09.clj)                                                                                |
 | 10    | Hoof It               | [blog](docs/day10.md) | [source](src/advent_2024_clojure/day10.clj)                                                                                |
 | 11    |                       | blog                  | source                                                                                                                     |
 | 12    |                       | blog                  | source                                                                                                                     |
