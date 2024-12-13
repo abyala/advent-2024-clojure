@@ -138,3 +138,17 @@ Obviously, it's time for the unifed `solve` function.
 ```
 
 If you've read any of my solutions this year, you should be able to figure this one out.
+
+## Refactoring the parser
+
+At the coffee shop this morning, I realized I can simplify the parsing logic, inlining `parse-input` and `parse-machine`
+into a single function. We don't need to work with each line in the machine string separately; a machine has six
+numbers, so we can just parse them out and use `zipmap` to throw them into a map. Note that we now use
+`c/split-by-blank-lines` instead of `c/split-by-blank-line-groups` to work with the machine as a single string instead
+of a sequence of strings.
+
+```clojure
+(defn parse-input [input]
+  (map #(zipmap [:ax :ay :bx :by :prizex :prizey] (c/split-longs %))
+       (c/split-by-blank-lines input)))
+```
