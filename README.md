@@ -14,7 +14,7 @@
 | 10    | Hoof It               | [blog](docs/day10.md) | [source](src/advent_2024_clojure/day10.clj)                                                                                |
 | 11    | Plutonian Pebbles     | [blog](docs/day11.md) | [source](src/advent_2024_clojure/day11.clj)<br/>[memoized source](src/advent_2024_clojure/day11_memo.clj)                  |
 | 12    | Garden Groups         | [blog](docs/day12.md) | [source](src/advent_2024_clojure/day12.clj)                                                                                |
-| 13    |                       | blog                  | source                                                                                                                     |
+| 13    | Claw Contraption      | [blog](docs/day13.md) | [source](src/advent_2024_clojure/day13.clj)                                                                                |
 | 14    |                       | blog                  | source                                                                                                                     |
 | 15    |                       | blog                  | source                                                                                                                     |
 | 16    |                       | blog                  | source                                                                                                                     |
