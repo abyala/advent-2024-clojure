@@ -16,7 +16,7 @@
 | 12    | Garden Groups         | [blog](docs/day12.md) | [source](src/advent_2024_clojure/day12.clj)                                                                                |
 | 13    | Claw Contraption      | [blog](docs/day13.md) | [source](src/advent_2024_clojure/day13.clj)                                                                                |
 | 14    | Restroom Redoubt      | [blog](docs/day14.md) | [source](src/advent_2024_clojure/day14.clj)                                                                                |
-| 15    |                       | blog                  | source                                                                                                                     |
+| 15    | Warehouse Woes        | [blog](docs/day15.md) | [source](src/advent_2024_clojure/day15.clj)                                                                                |
 | 16    |                       | blog                  | source                                                                                                                     |
 | 17    |                       | blog                  | source                                                                                                                     |
 | 18    |                       | blog                  | source                                                                                                                     |
