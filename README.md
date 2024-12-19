@@ -20,7 +20,7 @@
 | 16    |                       | blog                  | source                                                                                                                     |
 | 17    |                       | blog                  | source                                                                                                                     |
 | 18    | RAM Run               | [blog](docs/day18.md) | [source](src/advent_2024_clojure/day18.clj)                                                                                |
-| 19    |                       | blog                  | source                                                                                                                     |
+| 19    | Linen Layout          | [blog](docs/day19.md) | [source](src/advent_2024_clojure/day19.clj)                                                                                |
 | 20    |                       | blog                  | source                                                                                                                     |
 | 21    |                       | blog                  | source                                                                                                                     |
 | 22    |                       | blog                  | source                                                                                                                     |
