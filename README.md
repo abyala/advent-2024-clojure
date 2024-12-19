@@ -19,7 +19,7 @@
 | 15    | Warehouse Woes        | [blog](docs/day15.md) | [source](src/advent_2024_clojure/day15.clj)                                                                                |
 | 16    |                       | blog                  | source                                                                                                                     |
 | 17    |                       | blog                  | source                                                                                                                     |
-| 18    |                       | blog                  | source                                                                                                                     |
+| 18    | RAM Run               | [blog](docs/day18.md) | [source](src/advent_2024_clojure/day18.clj)                                                                                |
 | 19    |                       | blog                  | source                                                                                                                     |
 | 20    |                       | blog                  | source                                                                                                                     |
 | 21    |                       | blog                  | source                                                                                                                     |
