@@ -3,8 +3,8 @@
             [abyala.advent-utils-clojure.core :as c]))
 
 (defn parse-input [input]
-  (let [[[pattern-str] designs] (c/split-blank-line-groups input)]
-    {:patterns (re-seq #"\w+" pattern-str) :designs designs}))
+  (zipmap [:patterns :designs]
+          (map (partial re-seq #"\w+") (c/split-by-blank-lines input))))
 
 (defn available-count [patterns design]
   (get (reduce (fn [acc n] (let [num-paths (acc n)

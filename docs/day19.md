@@ -135,7 +135,9 @@ do another mapping function before adding the values together. For `part2`, we u
 the same value we saw above. For `part1`, we use the function `(partial min 1)` so that if `available-count` returns
 anything other than a zero, it sets itself to 1. And the sum of 0 or 1 is the same as the count.
 
-## Refactoring without memoizing
+## Refactorings
+
+### Rewrite available-acount without memoizing
 
 I thought of a way to reimplement `available-count` that's fast (linear-time) and doesn't require caching or memoizing.
 The idea is that we'll keep a look-ahead map of the `design` string's index to the number of paths leading up to it.
@@ -173,3 +175,18 @@ There's another theoretical optimization we could make, but won't. If we arrange
 we found a match on the single-length pattern `a`, we don't need to check any other single-length pattern since only
 one single-length pattern will match a single-length string. Similarly, if the 2-length pattern `ab` matched, there's
 no reason to see if `ac` matched at that index too. It would be more efficient, I suppose, but is it worth it? 🤔
+
+### Simplify parsing
+
+We can make `parse-input` much easier to understand.
+
+```clojure
+(defn parse-input [input]
+  (zipmap [:patterns :designs]
+          (map (partial re-seq #"\w+") (c/split-by-blank-lines input))))
+```
+
+The single-line of patterns and the multiple lines of designs really are the same thing - a bunch of alphabetical 
+strings. So if we use `(c/split-by-blank-lines input)` instead of `c/split-blank-line-groups`, we'll get back a list
+of two strings - the patterns and designs. If we map each one to the regular expression to pull out all alphabetical
+strings, we can `zipmap` the keys `:patterns` and `:designs` to the 2-element list of parsed string lists.
