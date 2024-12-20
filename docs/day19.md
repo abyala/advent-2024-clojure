@@ -134,3 +134,42 @@ function from part 1 since `available-count` is nice and fast, so let's do it.
 do another mapping function before adding the values together. For `part2`, we use `identity` since that will give us
 the same value we saw above. For `part1`, we use the function `(partial min 1)` so that if `available-count` returns
 anything other than a zero, it sets itself to 1. And the sum of 0 or 1 is the same as the count.
+
+## Refactoring without memoizing
+
+I thought of a way to reimplement `available-count` that's fast (linear-time) and doesn't require caching or memoizing.
+The idea is that we'll keep a look-ahead map of the `design` string's index to the number of paths leading up to it.
+Then at each index `n` along the `design` string, starting at the beginning, find each pattern that matches the start
+of the substring of the `design`, starting at `n`. For each match, add the number of paths already found to the
+look-ahead map at index `(+ n (count pattern))`.
+
+```clojure
+(defn available-count [patterns design]
+  (get (reduce (fn [acc n] (let [num-paths (acc n)
+                                 test (subs design n)]
+                             (if num-paths (apply merge-with + acc (keep #(when (str/starts-with? test %)
+                                                                            {(+ n (count %)) num-paths})
+                                                                         patterns))
+                                           acc)))
+               {0 1}
+               (range (count design)))
+       (count design) 0))
+```
+
+This is a simple `reduce` function of the form `(reduce f {0 1} (range (count design)))`, meaning that we're going
+to use an initial state map of 0 to 1, since there's one path to the start of the string, and a driving collection of
+`(range (count design))`. The for each index, see if the accumulated look-ahead has a value for that index. If not,
+then there's no reason to look at the patterns at that index since there's no path to get there, so continue with
+`acc`. If there is a value, then `(apply merge-with + acc pattern-matches)` where `pattern-matches` is a collection of
+maps of `{next-n num-paths}` for each matching pattern. Finally, when we're all done, we call 
+`(get look-ahead (count design) 0)` to get the number of paths to the full length of `design`, or `0` if we never found
+a path to it.
+
+The running time is barely slower than the memoized recursive function, but this requires less memory (no impact on the
+JVM) and is relatively straightforward to understand.
+
+There's another theoretical optimization we could make, but won't. If we arrange the `patterns` as a map of
+`{pattern-length (patterns)}`, we can do fewer comparisons. If, for instance, we had the patterns `(a b c ab ac)` and
+we found a match on the single-length pattern `a`, we don't need to check any other single-length pattern since only
+one single-length pattern will match a single-length string. Similarly, if the 2-length pattern `ab` matched, there's
+no reason to see if `ac` matched at that index too. It would be more efficient, I suppose, but is it worth it? 🤔

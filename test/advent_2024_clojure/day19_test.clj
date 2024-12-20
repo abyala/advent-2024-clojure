@@ -10,6 +10,6 @@
                          test-data 6
                          puzzle-data 363))
 (deftest part2-test
-   (are [input expected] (= (d/part2 input) expected)
+   (are [input expected] (= (time (d/part2 input)) expected)
                          test-data 16
                          puzzle-data 642535800868438))

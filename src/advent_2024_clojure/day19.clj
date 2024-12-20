@@ -6,12 +6,16 @@
   (let [[[pattern-str] designs] (c/split-blank-line-groups input)]
     {:patterns (re-seq #"\w+" pattern-str) :designs designs}))
 
-(def available-count
-  (memoize (fn [patterns design]
-             (if (str/blank? design)
-               1
-               (transduce (comp (filter (partial str/starts-with? design))
-                                (map #(available-count patterns (subs design (count %))))) + patterns)))))
+(defn available-count [patterns design]
+  (get (reduce (fn [acc n] (let [num-paths (acc n)
+                                 test (subs design n)]
+                             (if num-paths (apply merge-with + acc (keep #(when (str/starts-with? test %)
+                                                                            {(+ n (count %)) num-paths})
+                                                                         patterns))
+                                           acc)))
+               {0 1}
+               (range (count design)))
+       (count design) 0))
 
 (defn solve [xform-fn input]
   (let [{:keys [patterns designs]} (parse-input input)]
