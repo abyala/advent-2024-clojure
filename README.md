@@ -23,7 +23,7 @@
 | 19    | Linen Layout          | [blog](docs/day19.md) | [source](src/advent_2024_clojure/day19.clj)                                                                                |
 | 20    |                       | blog                  | source                                                                                                                     |
 | 21    |                       | blog                  | source                                                                                                                     |
-| 22    |                       | blog                  | source                                                                                                                     |
+| 22    | Monkey Market         | [blog](docs/day22.md) | [source](src/advent_2024_clojure/day22.clj)                                                                                |
 | 23    |                       | blog                  | source                                                                                                                     |
 | 24    |                       | blog                  | source                                                                                                                     |
 | 25    |                       | blog                  | source                                                                                                                     |
