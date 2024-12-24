@@ -31,8 +31,8 @@
   (->> (parse-connections input)
        (maximal-cliques)
        (mapcat (partial c/unique-combinations 3))
-       (filter (partial some #(str/starts-with? % "t")))
        set
+       (filter (partial some #(str/starts-with? % "t")))
        count))
 
 (defn part2 [input]
