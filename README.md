@@ -24,6 +24,6 @@
 | 20    |                       | blog                  | source                                                                                                                     |
 | 21    |                       | blog                  | source                                                                                                                     |
 | 22    | Monkey Market         | [blog](docs/day22.md) | [source](src/advent_2024_clojure/day22.clj)                                                                                |
-| 23    |                       | blog                  | source                                                                                                                     |
+| 23    | LAN Party             | [blog](docs/day23.md) | [source](src/advent_2024_clojure/day23.clj)                                                                                |
 | 24    |                       | blog                  | source                                                                                                                     |
 | 25    |                       | blog                  | source                                                                                                                     |
