@@ -1,7 +1,8 @@
-# Day 22: LAN Party
+# Day 23: LAN Party
 
 * [Problem statement](https://adventofcode.com/2024/day/23)
 * [Solution code](https://github.com/abyala/advent-2024-clojure/blob/master/src/advent_2024_clojure/day23.clj)
+* [Bron-Kerbosch Solution code](https://github.com/abyala/advent-2024-clojure/blob/master/src/advent_2024_clojure/day23_bron_kerbosch.clj)
 
 ## Intro
 
@@ -126,3 +127,77 @@ list of names, with commas, per the instructions. If we don't find any, then the
 ```
 
 And then `part2` is really simple - parse the connections and call `largest-network` to get our answer.
+
+## Refactor to Bron-Kerbosch Algorithm
+
+As my friend Todd Ginsberg mentioned in [his solution for day 23](https://todd.ginsberg.com/post/advent-of-code/2024/day23/),
+this puzzle can be solved using the [Bron-Kerbosch Algorithm](https://en.wikipedia.org/wiki/Bron%E2%80%93Kerbosch_algorithm)
+for finding all maximal cliques within a undirected graph. So let's do try that.
+
+First, we'll implement the algorithm itself, which again you can read about on Wikipedia or, in my case, watch a 
+YouTube video.
+
+```clojure
+(defn maximal-cliques
+  ([connection-map] (maximal-cliques connection-map (keys connection-map)))
+  ([neighbor-fn vertices]
+   (letfn [(cliques [results r p x]
+             (if (every? empty? [p x])
+               (conj results r)
+               (first (reduce (fn [[results' p' x'] v]
+                                [(cliques results'
+                                          (conj r v)
+                                          (set/intersection p' (neighbor-fn v))
+                                          (set/intersection x' (neighbor-fn v)))
+                                 (disj p' v)
+                                 (conj x' v)])
+                              [results p x]
+                              p))))]
+     (cliques () #{} (set vertices) #{}))))
+```
+
+The function is multi-arity, in the off-case I decide to pull this into the Advent Utils repo. The 1-arity version
+assumes what we have here - a single map of each node or vertex to its set of connected neighbors. This calls the
+2-arity version that takes in a function to find the neighbor of a vertex, and the vertexes themselves. When would this
+ever not be the map? Who knows, but the algorithm doesn't need to assume there's no other case.
+
+The bulk of this function leverages the algorithm itself, used here as an internal function `cliques`, which manages
+the `r`, `p`, and `x` values for the function. Instead of "outputting" the results, it passes around a `results`
+collection, which is itself the return value, so the `maximal-cliques` function just returns that result.
+
+How do we use this? Well this definitely makes sense for part 2.
+
+```clojure
+(defn part2 [input]
+  (->> (parse-connections input)
+       (maximal-cliques)
+       (sort-by count)
+       last
+       sort
+       (str/join ",")))
+```
+
+Here we parse the input and work with the collection of maximal cliques. Then since we only want the largest clique,
+we call `(sort-by count)` and `last` to find it, and then we `sort` the computers and call `(str/join "," computers)`
+as before.
+
+We can do the same for part 1; it's a bit of a forced effort, but it'll work.
+
+```clojure
+(defn part1 [input]
+  (->> (parse-connections input)
+       (maximal-cliques)
+       (mapcat (partial c/unique-combinations 3))
+       (filter (partial some #(str/starts-with? % "t")))
+       set
+       count))
+```
+
+Once again we call `maximal-cliques` on the parsed data, but then we go through each clique and break into its unique
+combinations of exact 3. If there are 1- or 2-element cliques, they'll just disappear here. Then we filter the cliques
+for the ones where at least one member starts with a `"t"`. Now this algorithm has the possibility of finding
+duplicates. For instance, `#{:a :b :c :d}` and `#{:a :b :c :e}` might both be maximal cliques, but they can't be joined
+if `:d` and `:e` do not connect. That said, both would return the `#{:a :b :c}` triple, so we need to throw all valid
+triples into a `set` so we can `count` it. 
+
+It's not how I would choose to do it, but it's a nice example of code reuse.
