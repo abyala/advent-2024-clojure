@@ -13,21 +13,6 @@
 (defn process-gates [state]
   (let [{:keys [wires gates]} state]
     (if (seq gates)
-      (let [state' (reduce (fn [acc [g1 op g2 g3 :as gate]]
-                             (let [[v1 v2] (map wires [g1 g2])]
-                               (if (every? some? [v1 v2])
-                                 (assoc-in acc [:wires g3] (({"AND" bit-and "OR" bit-or "XOR" bit-xor} op)
-                                                            v1 v2))
-                                 (update acc :gates conj gate))))
-                           (assoc state :gates ())
-                           gates)]
-        (when (not= state state')
-          (recur state')))
-      state)))
-
-(defn process-gates [state]
-  (let [{:keys [wires gates]} state]
-    (if (seq gates)
       (recur (reduce (fn [acc [g1 op g2 g3 :as gate]]
                        (let [[v1 v2] (map wires [g1 g2])]
                          (if (every? some? [v1 v2])
