@@ -22,7 +22,7 @@
 | 18    | RAM Run               | [blog](docs/day18.md) | [source](src/advent_2024_clojure/day18.clj)                                                                                |
 | 19    | Linen Layout          | [blog](docs/day19.md) | [source](src/advent_2024_clojure/day19.clj)                                                                                |
 | 20    |                       | blog                  | source                                                                                                                     |
-| 21    |                       | blog                  | source                                                                                                                     |
+| 21    | Keypad Conundrum      | [blog](docs/day21.md) | [source](src/advent_2024_clojure/day21.clj)                                                                                |
 | 22    | Monkey Market         | [blog](docs/day22.md) | [source](src/advent_2024_clojure/day22.clj)                                                                                |
 | 23    | LAN Party             | [blog](docs/day23.md) | [source](src/advent_2024_clojure/day23.clj)<br/>[Bron-Kerbosch source](src/advent_2024_clojure/day23_bron_kerbosch.clj)    |
 | 24    | Crossed Wires         | [blog](docs/day24.md) | [source](src/advent_2024_clojure/day24.clj)                                                                                |
